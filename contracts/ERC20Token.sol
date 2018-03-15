@@ -27,6 +27,7 @@ contract ERC20Token {
       name = _tokenName;
       decimals = _decimalUnits;
       symbol = _tokenSymbol;
+      balances[msg.sender] = _totalTokens;
     }
 
     function totalSupply() public view returns (uint256) {
@@ -37,6 +38,7 @@ contract ERC20Token {
         return balances[_owner];
     }
 
+    //XXX Still wip, you don't want to expose this to public. Add ownership
     function mint(address _to, uint256 _value) public returns (bool) {
         balances[_to] = balances[_to].add(_value);
         totalSupply_.add(_value);
