@@ -10,6 +10,11 @@ contract ERC20Token {
 
     uint256 totalSupply_;
 
+    // Gold Token
+    // GLD
+    // 100.22
+    // 1,000,000
+
     string public name;
     uint8 public decimals;
     string public symbol;
@@ -22,7 +27,6 @@ contract ERC20Token {
       name = _tokenName;
       decimals = _decimalUnits;
       symbol = _tokenSymbol;
-      balances[msg.sender] = totalSupply_;
     }
 
     function totalSupply() public view returns (uint256) {
@@ -31,6 +35,11 @@ contract ERC20Token {
     
     function balanceOf(address _owner) public view returns (uint256 balance) {
         return balances[_owner];
+    }
+
+    function mint(address _to, uint256 _value) public returns (bool) {
+        balances[_to] = balances[_to].add(_value);
+        totalSupply_.add(_value);
     }
 
     function transfer(address _to, uint256 _value) public returns (bool) {
