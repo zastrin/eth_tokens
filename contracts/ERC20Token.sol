@@ -18,6 +18,8 @@ contract ERC20Token {
     string public name;
     uint8 public decimals;
     string public symbol;
+
+    address public owner;
     
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
@@ -27,7 +29,12 @@ contract ERC20Token {
       name = _tokenName;
       decimals = _decimalUnits;
       symbol = _tokenSymbol;
-      balances[msg.sender] = _totalTokens;
+      owner = msg.sender;
+    }
+
+    function transferOwnership(address _newOwner) public {
+      require(msg.sender == owner);
+      owner = _newOwner;
     }
 
     function totalSupply() public view returns (uint256) {
@@ -40,6 +47,7 @@ contract ERC20Token {
 
     //XXX Still wip, you don't want to expose this to public. Add ownership
     function mint(address _to, uint256 _value) public returns (bool) {
+        require(msg.sender == owner);
         balances[_to] = balances[_to].add(_value);
         totalSupply_.add(_value);
     }
@@ -69,7 +77,7 @@ contract ERC20Token {
         require(_to != address(0));
         require(_value <= balances[_from]);
         require(_value <= allowed[_from][msg.sender]);
-    
+
         balances[_from] = balances[_from].sub(_value);
         balances[_to] = balances[_to].add(_value);
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
