@@ -34,4 +34,8 @@ contract('ERC20Token', function(accounts) {
     });
   });
 
+  // Write a test for approve function
+
+  // Test to make sure transferFrom successfully transfers the approved no. of tokens
+
 });

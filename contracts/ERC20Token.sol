@@ -45,7 +45,6 @@ contract ERC20Token {
         return balances[_owner];
     }
 
-    //XXX Still wip, you don't want to expose this to public. Add ownership
     function mint(address _to, uint256 _value) public returns (bool) {
         require(msg.sender == owner);
         balances[_to] = balances[_to].add(_value);
