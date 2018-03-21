@@ -5,11 +5,11 @@ import "../stylesheets/app.css";
 import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
 
-// Import our contract artifacts and turn them into usable abstractions.
-import metacoin_artifacts from '../../build/contracts/MetaCoin.json'
+import crowdsale_artifacts from '../../build/contracts/Crowdsale.json'
+import erc20token_artifacts from '../../build/contracts/ERC20Token.json'
 
-// MetaCoin is our usable abstraction, which we'll use through the code below.
-var MetaCoin = contract(metacoin_artifacts);
+var Crowdsale = contract(crowdsale_artifacts);
+var ERC20Token = contract(erc20token_artifacts);
 
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
@@ -22,7 +22,8 @@ window.App = {
     var self = this;
 
     // Bootstrap the MetaCoin abstraction for Use.
-    MetaCoin.setProvider(web3.currentProvider);
+    Crowdsale.setProvider(web3.currentProvider);
+    ERC20Token.setProvider(web3.currentProvider);
 
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function(err, accs) {
@@ -43,45 +44,35 @@ window.App = {
     });
   },
 
-  setStatus: function(message) {
-    var status = document.getElementById("status");
-    status.innerHTML = message;
-  },
-
   refreshBalance: function() {
-    var self = this;
-
-    var meta;
-    MetaCoin.deployed().then(function(instance) {
-      meta = instance;
-      return meta.getBalance.call(account, {from: account});
-    }).then(function(value) {
-      var balance_element = document.getElementById("balance");
-      balance_element.innerHTML = value.valueOf();
-    }).catch(function(e) {
-      console.log(e);
-      self.setStatus("Error getting balance; see log.");
-    });
+    ERC20Token.deployed().then(function(instance) {
+      instance.balanceOf.call(account).then(function(i) {
+        $("#balance").html(i.toString());
+      });
+    })
+    
   },
 
-  sendCoin: function() {
+  buyTokens: function() {
     var self = this;
 
-    var amount = parseInt(document.getElementById("amount").value);
+    var amount = parseFloat(document.getElementById("amount").value);
     var receiver = document.getElementById("receiver").value;
 
-    this.setStatus("Initiating transaction... (please wait)");
+    $("#status").html("Initiating transaction... (please wait)");
+
+    console.log(amount);
 
     var meta;
-    MetaCoin.deployed().then(function(instance) {
+    Crowdsale.deployed().then(function(instance) {
       meta = instance;
-      return meta.sendCoin(receiver, amount, {from: account});
+      return meta.buyTokens(receiver, {from: account, value: web3.toWei(amount, 'ether')});
     }).then(function() {
-      self.setStatus("Transaction complete!");
+      $("#status").html("Transaction is complete!");
       self.refreshBalance();
     }).catch(function(e) {
       console.log(e);
-      self.setStatus("Error sending coin; see log.");
+      $("#status").html("Error sending coin; see log.");
     });
   }
 };
