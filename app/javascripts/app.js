@@ -45,12 +45,14 @@ window.App = {
   },
 
   refreshBalance: function() {
+    var balance = 0;
     ERC20Token.deployed().then(function(instance) {
       instance.balanceOf.call(account).then(function(i) {
-        $("#balance").html(i.toString());
+        instance.symbol.call().then(function(sym) {
+          $("#balance").html(i.toString() + " " + sym);
+        });
       });
     })
-    
   },
 
   buyTokens: function() {
