@@ -51,8 +51,14 @@ window.App = {
         instance.symbol.call().then(function(sym) {
           $("#balance").html(i.toString() + " " + sym);
         });
+        instance.owner.call().then(function(owner) {
+          $("#token_owner").html("Token owner is " + owner);
+        });
       });
-    })
+    });
+    Crowdsale.deployed().then(function(instance) {
+      $("#crowdsale_address").html("Crowdsale address is " + instance.address);
+    });
   },
 
   buyTokens: function() {
